@@ -7,17 +7,45 @@ use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
-    //  GET /api/articles
-     
+    /**
+     * GET /api/articles
+     * Get all articles
+     */
     public function index()
     {
+        $articles = Article::orderBy('created_at', 'desc')->get();
+
         return response()->json([
-            'message' => 'hello rohit'
+            'success' => true,
+            'data' => $articles
         ], 200);
     }
 
-    //  GET /api/articles/{id}
-   
+    /**
+     * GET /api/articles/latest
+     * Get latest article (Phase 2 use)
+     */
+    public function latest()
+    {
+        $article = Article::orderBy('created_at', 'desc')->first();
+
+        if (!$article) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No articles found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $article
+        ], 200);
+    }
+
+    /**
+     * GET /api/articles/{id}
+     * Get single article
+     */
     public function show($id)
     {
         $article = Article::find($id);
@@ -35,12 +63,12 @@ class ArticleController extends Controller
         ], 200);
     }
 
-    
-    //   POST /api/articles
-     
+    /**
+     * POST /api/articles
+     * Create new article
+     */
     public function store(Request $request)
     {
-      
         $request->validate([
             'title'   => 'required|string|max:255',
             'content' => 'required|string',
@@ -60,8 +88,10 @@ class ArticleController extends Controller
         ], 201);
     }
 
-//    PUT /api/articles/{id}
-    
+    /**
+     * PUT /api/articles/{id}
+     * Update article
+     */
     public function update(Request $request, $id)
     {
         $article = Article::find($id);
@@ -92,8 +122,10 @@ class ArticleController extends Controller
         ], 200);
     }
 
-    //  DELETE /api/articles/{id}
-    
+    /**
+     * DELETE /api/articles/{id}
+     * Delete article
+     */
     public function destroy($id)
     {
         $article = Article::find($id);
@@ -110,25 +142,6 @@ class ArticleController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Article deleted successfully'
-        ], 200);
-    }
-
-//    GET /api/articles/latest
-   
-    public function latest()
-    {
-        $article = Article::orderBy('created_at', 'desc')->first();
-
-        if (!$article) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No articles found'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $article
         ], 200);
     }
 }
